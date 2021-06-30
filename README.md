@@ -1,0 +1,2 @@
+# Algoritmo_EncoderLinear
+ 

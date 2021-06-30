@@ -43,11 +43,11 @@ int ReadMem::run()
     TIMESTAMPED_TEST_DATA my_data;
 
     
-   double Velocidade_requerida = 25;                   //Uma velocidade de Teste para ver o funcionamento do algoritmo.
-   double Minha_velocidade;                            //Variável que será salvo o valor da velocidade linear que está na memória compartilhada. 
-   double auxiliar;                                    //Salva a diferença entre a velocidade_requerida e a Minha_velocidade.
-   double valor_pwm;
-   double valor_freio;
+   double required_speed= 25;                   //Uma velocidade de Teste para ver o funcionamento do algoritmo.
+   double My_speed;                            //Variável que será salvo o valor da velocidade linear que está na memória compartilhada. 
+   double assistant;                                    //Salva a diferença entre a velocidade_requerida e a Minha_velocidade.
+   double value_pwm;
+   double value_brake;
 
     ofstream arquivo1;
     arquivo1.open("Velocidade_saida",ios::app);       //Cria e abre um arquivo para salvar o valor da velocidade de saída.
@@ -66,45 +66,45 @@ int ReadMem::run()
 
         std::cout <<  "TEMPO: " << my_data.time1 << std::endl;
 
-       Minha_velocidade = my_data.velocidade;                               // Inicio da lógica de controle. 
-       auxiliar = Velocidade_requerida-Minha_velocidade;
+       My_speed = my_data.velocidade;                               // Inicio da lógica de controle. 
+       assistant = required_speed-My_speed;
 
-      if(auxiliar > 0){   
+      if(assistant > 0){   
                                                   // Compara os valor da diferença entre a velocidade_requerida e a Minha_velocidade e toma a decisão necessária.
             std::cout<< "ACELERAR" <<std::endl;
             analogWrite(PINO_MOTORFREIO,0);
             
-			if(auxiliar > MAX_ACC)
+			if(assistant > MAX_ACC)
 			{
-				valor_pwm = (MAX_ACC/10.0 +Minha_velocidade)*CONST_PWM;
+				value_pwm = (MAX_ACC/10.0 +My_speed)*CONST_PWM;
 			}
 			else
 			{
-				valor_pwm = (auxiliar/10.0 +Minha_velocidade)*CONST_PWM;
+				value_pwm = (assistant/10.0 +My_speed)*CONST_PWM;
 			}
-			analogWrite(PINO_MOTORPRINCIPAL,valor_pwm);
+			analogWrite(PINO_MOTORPRINCIPAL,value_pwm);
 			
         }
-      else if(auxiliar < 0){
+      else if(assistant< 0){
             
-			if(auxiliar < MAX_DCC)
+			if(assistant < MAX_DCC)
 			{
-				valor_freio = ((MAX_DCC/10 -Minha_velocidade)*CONST_PWM_FREIO)*-1;
+				value_brake = ((MAX_DCC/10 -My_speed)*CONST_PWM_FREIO)*-1;
 			}
 			else
 			{
-				valor_freio = ((auxiliar/10.0 -Minha_velocidade)*CONST_PWM_FREIO)*-1;
+				value_brake = ((assistant/10.0 -My_speed)*CONST_PWM_FREIO)*-1;
 			}
 
 			//analogWrite(PINO_MOTORPRINCIPAL,valor_pwm);
             std::cout<<"FREAR"<< std::endl;
-            valor_freio = auxiliar*CONST_PWM_FREIO;
-            analogWrite(PINO_MOTORFREIO,valor_freio);
+            value_brake = assistant*CONST_PWM_FREIO;
+            analogWrite(PINO_MOTORFREIO,value_brake);
             
         }
-      else if(auxiliar == 0){
+      else if(assistant == 0){
             std::cout<<"MANTER"<< std::endl;
-            analogWrite(PINO_PWM,valor_pwm);
+            analogWrite(PINO_PWM,value_pwm);
             analogWrite(PINO_MOTORFREIO,0);
         }
 
